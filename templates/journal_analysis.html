@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Journal Analysis Result</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .content-preview, .full-content {
+            white-space: pre-wrap; /* Maintains formatting for preview */
+            word-wrap: break-word;
+            margin-bottom: 20px;
+        }
+        .full-content { display: none; }
+    </style>
+</head>
+<body class="container mt-5">
+    {% if analysis %}
+    <h1 class="mb-4">Journal Analysis Result for "{{ analysis.title }}"</h1>
+    <p><strong>Date:</strong> {{ analysis.date }}</p>
+    <p><strong>Emotion:</strong> {{ analysis.emotion or "Not Specified" }}</p>
+    
+    <div>
+        <strong>Content Preview:</strong>
+        <div class="content-preview">{{ analysis.content[:75] + '...' if analysis.content|length > 75 else analysis.content }}
+            {% if analysis.content|length > 75 %}
+            <a href="#" onclick="showFullContent()">See more</a>
+            {% endif %}
+        </div>
+        <div class="full-content">
+            {{ analysis.content }}
+            <a href="#" onclick="showPreviewContent()">See less</a>
+        </div>
+    </div>
+    
+    {% if analysis.virtues_analysis %}
+        <h2>Virtue Analysis Details</h2>
+        {% for virtue in analysis.virtues_analysis %}
+            <div class="mb-3">
+                <p><strong>Virtue:</strong> {{ virtue.virtue }}</p>
+                <p><strong>Met:</strong> {{ "Yes" if virtue.met else "No" }}</p>
+                <p><strong>Details:</strong> {{ virtue.how_met if virtue.met else virtue.why_not_met }}</p>
+                <p><strong>Improvement:</strong> {{ virtue.how_to_improve if virtue.met else virtue.what_to_change }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <p><strong>Summary:</strong> {{ analysis.summary or "Summary: Not Provided" }}</p>
+
+    <script>
+        function showFullContent() {
+            document.querySelector('.content-preview').style.display = 'none';
+            document.querySelector('.full-content').style.display = 'block';
+        }
+
+        function showPreviewContent() {
+            document.querySelector('.content-preview').style.display = 'block';
+            document.querySelector('.full-content').style.display = 'none';
+        }
+    </script>
+    {% endif %}
+</body>
+</html>
